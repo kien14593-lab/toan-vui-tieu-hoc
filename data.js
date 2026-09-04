@@ -32,9 +32,22 @@ const TAP = {
   e210: { so: "2.10", ten: "Phép nhân", file: "tap-2-10.mp4", nv: "truc" },
   e211: { so: "2.11", ten: "Phép chia", file: "tap-2-11.mp4", nv: "truc" },
   e212: { so: "2.12", ten: "Khối trụ, khối cầu", file: "tap-2-12.mp4", nv: "cun" },
+  e301: { so: "3.01", ten: "Bảng nhân 9", file: "tap-3-01.mp4", nv: "cao" },
+  e302: { so: "3.02", ten: "Tìm thành phần phép tính", file: "tap-3-02.mp4", nv: "cao" },
+  e303: { so: "3.03", ten: "Một phần mấy", file: "tap-3-03.mp4", nv: "cao" },
+  e304: { so: "3.04", ten: "Điểm ở giữa, trung điểm", file: "tap-3-04.mp4", nv: "meo" },
+  e305: { so: "3.05", ten: "Hình tròn", file: "tap-3-05.mp4", nv: "meo" },
+  e306: { so: "3.06", ten: "Góc vuông, góc không vuông", file: "tap-3-06.mp4", nv: "ong" },
+  e307: { so: "3.07", ten: "Gấp lên, giảm đi một số lần", file: "tap-3-07.mp4", nv: "tho" },
+  e308: { so: "3.08", ten: "Phép chia có dư", file: "tap-3-08.mp4", nv: "cao" },
+  e309: { so: "3.09", ten: "Chu vi hình chữ nhật", file: "tap-3-09.mp4", nv: "cao" },
+  e310: { so: "3.10", ten: "Chu vi hình vuông", file: "tap-3-10.mp4", nv: "ong" },
+  e311: { so: "3.11", ten: "Diện tích của một hình", file: "tap-3-11.mp4", nv: "cu" },
+  e312: { so: "3.12", ten: "Diện tích hình chữ nhật", file: "tap-3-12.mp4", nv: "cu" },
 };
 const TAP_ORDER = ["e01","e02","e03","e04","e05","e06","e07","e08","e09","e10","e11","e12","e13","e14","e15","e16",
-  "e201","e202","e203","e204","e205","e206","e207","e208","e209","e210","e211","e212"];
+  "e201","e202","e203","e204","e205","e206","e207","e208","e209","e210","e211","e212",
+  "e301","e302","e303","e304","e305","e306","e307","e308","e309","e310","e311","e312"];
 
 /* ===== Nhân vật (đúng tạo hình trong video Manim) ===== */
 const NV = {
@@ -646,6 +659,181 @@ GEN.l2on = () => {
   return GEN[g]();
 };
 
+/* ============ LỚP 3 ============ */
+/* L3-C1: Bảng nhân 9 */
+GEN.l3c1 = () => {
+  const kieu = pick(["nhan", "meo", "chia"]);
+  if (kieu === "nhan") {
+    const a = ri(2, 10);
+    return { prompt: `9 × ${a} = ?`, visual: "", kind: "input",
+      answer: 9 * a,
+      explain: `Mẹo: gập ngón thứ ${a}. Trái ${a - 1} chục, phải ${10 - a} đơn vị → ${9 * a}.` };
+  }
+  if (kieu === "meo") {
+    const a = ri(2, 9);
+    const { opts, idx } = numOptions(a, 1, 10);
+    return { prompt: `Tính 9 × ${a} bằng mẹo bàn tay: gập ngón thứ mấy?`,
+      visual: `<div style="font-size:2.4rem">🙌</div>`,
+      kind: "choice", options: opts.map(String), answer: idx,
+      explain: `Nhân 9 với ${a} thì gập ngón thứ ${a}.` };
+  }
+  const q = ri(2, 10);
+  return { prompt: `${9 * q} : 9 = ?`, visual: "", kind: "input",
+    answer: q, explain: `Vì 9 × ${q} = ${9 * q} nên ${9 * q} : 9 = ${q}.` };
+};
+
+/* L3-C2: Tìm thành phần phép cộng, trừ */
+GEN.l3c2 = () => {
+  const kieu = pick(["sohang", "sobitru", "sotru"]);
+  if (kieu === "sohang") {
+    const a = ri(15, 60), b = ri(10, 35);
+    return { prompt: `Tìm số bí ẩn: ? + ${b} = ${a + b}`,
+      visual: `<div style="font-size:2.2rem">🎁</div>`, kind: "input",
+      answer: a,
+      explain: `Số hạng = tổng − số hạng kia: ${a + b} − ${b} = ${a}.` };
+  }
+  if (kieu === "sobitru") {
+    const hieu = ri(10, 40), st = ri(5, 30);
+    return { prompt: `Tìm số bí ẩn: ? − ${st} = ${hieu}`,
+      visual: "", kind: "input", answer: hieu + st,
+      explain: `Số bị trừ = hiệu + số trừ: ${hieu} + ${st} = ${hieu + st}.` };
+  }
+  const sbt = ri(30, 90), hieu = ri(5, sbt - 10);
+  return { prompt: `Tìm số bí ẩn: ${sbt} − ? = ${hieu}`,
+    visual: "", kind: "input", answer: sbt - hieu,
+    explain: `Số trừ = số bị trừ − hiệu: ${sbt} − ${hieu} = ${sbt - hieu}.` };
+};
+
+/* L3-C3: Một phần mấy */
+GEN.l3c3 = () => {
+  const kieu = pick(["cua", "sosanh"]);
+  if (kieu === "cua") {
+    const n = pick([2, 3, 4, 5]), q = ri(2, 9);
+    return { prompt: `Một phần ${["", "", "hai", "ba", "tư", "năm"][n]} của ${n * q} là bao nhiêu?`,
+      visual: "", kind: "input", answer: q,
+      explain: `${n * q} : ${n} = ${q}.` };
+  }
+  const a = ri(2, 4), b = ri(a + 1, 6);
+  const dung = ri(0, 1);
+  const opts = dung === 0 ? [`1/${a}`, `1/${b}`] : [`1/${b}`, `1/${a}`];
+  return { prompt: "Miếng bánh nào TO hơn?",
+    visual: `<div style="font-size:2.4rem">🍰</div>`,
+    kind: "choice", options: opts, answer: dung,
+    explain: `Chia càng nhiều phần miếng càng nhỏ: 1/${a} > 1/${b}.` };
+};
+
+/* L3-C4: Trung điểm & hình tròn */
+GEN.l3c4 = () => {
+  const kieu = pick(["trungdiem", "duongkinh", "bankinh"]);
+  if (kieu === "trungdiem") {
+    const k = ri(2, 15);
+    return { prompt: `Đoạn thẳng AB dài ${2 * k} cm, M là trung điểm. AM = ? (cm)`,
+      visual: "", kind: "input", answer: k,
+      explain: `Trung điểm chia đôi: ${2 * k} : 2 = ${k} cm.` };
+  }
+  if (kieu === "duongkinh") {
+    const r = ri(2, 20);
+    return { prompt: `Hình tròn có bán kính ${r} cm. Đường kính = ? (cm)`,
+      visual: `<div style="font-size:2.2rem">⭕</div>`, kind: "input",
+      answer: 2 * r,
+      explain: `Đường kính = 2 × bán kính = ${r} × 2 = ${2 * r} cm.` };
+  }
+  const r = ri(2, 15);
+  return { prompt: `Đường kính dài ${2 * r} cm. Bán kính = ? (cm)`,
+    visual: "", kind: "input", answer: r,
+    explain: `Bán kính = đường kính : 2 = ${2 * r} : 2 = ${r} cm.` };
+};
+
+/* L3-C5: Góc vuông, góc không vuông */
+GEN.l3c5 = () => {
+  const kieu = pick(["hinh", "dem"]);
+  if (kieu === "hinh") {
+    const CO = [["📖 Quyển sách mở phẳng", false], ["🪟 Góc cửa sổ", true],
+      ["✂️ Kéo đang mở rộng", false], ["📐 Góc vuông của ê ke", true]];
+    const [ten, vuong] = pick(CO);
+    return { prompt: `${ten} — có phải góc vuông không?`, visual: "",
+      kind: "choice", options: ["Có, góc vuông", "Không vuông"],
+      answer: vuong ? 0 : 1,
+      explain: vuong ? "Dùng ê ke kiểm tra: trùng khít — góc vuông!" : "Ê ke không trùng khít — không vuông." };
+  }
+  const HINH = [["hình vuông", 4], ["hình chữ nhật", 4], ["ê ke", 1]];
+  const [ten, n] = pick(HINH);
+  const { opts, idx } = numOptions(n, 0, 5);
+  return { prompt: `Một ${ten} có mấy góc vuông?`, visual: "",
+    kind: "choice", options: opts.map(String), answer: idx,
+    explain: `${ten} có ${n} góc vuông.` };
+};
+
+/* L3-C6: Gấp/giảm số lần & chia có dư */
+GEN.l3c6 = () => {
+  const kieu = pick(["gap", "giam", "du"]);
+  if (kieu === "gap") {
+    const a = ri(2, 9), k = ri(2, 5);
+    return { prompt: `${a} gấp lên ${k} lần bằng bao nhiêu?`,
+      visual: "", kind: "input", answer: a * k,
+      explain: `Gấp lên thì nhân: ${a} × ${k} = ${a * k}.` };
+  }
+  if (kieu === "giam") {
+    const k = ri(2, 5), q = ri(2, 9);
+    return { prompt: `${k * q} giảm đi ${k} lần còn bao nhiêu?`,
+      visual: "", kind: "input", answer: q,
+      explain: `Giảm đi thì chia: ${k * q} : ${k} = ${q}.` };
+  }
+  const n = pick([2, 3, 4, 5]), q = ri(2, 8), du = ri(1, n - 1);
+  const m = n * q + du;
+  return { prompt: `${m} : ${n} dư mấy?`, visual: "", kind: "input",
+    answer: du,
+    explain: `${m} : ${n} = ${q} dư ${du} (vì ${n} × ${q} = ${n * q}, còn thừa ${du}).` };
+};
+
+/* L3-C7: Chu vi HCN & hình vuông */
+GEN.l3c7 = () => {
+  const kieu = pick(["hcn", "vuong", "nguoc"]);
+  if (kieu === "hcn") {
+    const d = ri(4, 15), r = ri(2, d - 1);
+    return { prompt: `Hình chữ nhật dài ${d} cm, rộng ${r} cm. Chu vi = ? (cm)`,
+      visual: "", kind: "input", answer: (d + r) * 2,
+      explain: `(${d} + ${r}) × 2 = ${d + r} × 2 = ${(d + r) * 2} cm.` };
+  }
+  if (kieu === "vuong") {
+    const c = ri(3, 12);
+    return { prompt: `Hình vuông cạnh ${c} cm. Chu vi = ? (cm)`,
+      visual: "", kind: "input", answer: c * 4,
+      explain: `${c} × 4 = ${c * 4} cm.` };
+  }
+  const c = ri(3, 10);
+  return { prompt: `Hình vuông có chu vi ${c * 4} cm. Một cạnh dài ? (cm)`,
+    visual: "", kind: "input", answer: c,
+    explain: `Cạnh = chu vi : 4 = ${c * 4} : 4 = ${c} cm.` };
+};
+
+/* L3-C8: Diện tích */
+GEN.l3c8 = () => {
+  const kieu = pick(["dem", "hcn", "vuong"]);
+  if (kieu === "dem") {
+    const n = ri(4, 12);
+    return { prompt: `Một hình được phủ kín bởi ${n} ô vuông 1 cm². Diện tích = ? (cm²)`,
+      visual: `<div style="font-size:2rem">🟨</div>`, kind: "input",
+      answer: n, explain: `${n} ô × 1 cm² = ${n} cm².` };
+  }
+  if (kieu === "hcn") {
+    const d = ri(3, 10), r = ri(2, d);
+    return { prompt: `Hình chữ nhật dài ${d} cm, rộng ${r} cm. Diện tích = ? (cm²)`,
+      visual: "", kind: "input", answer: d * r,
+      explain: `S = dài × rộng = ${d} × ${r} = ${d * r} cm².` };
+  }
+  const c = ri(2, 9);
+  return { prompt: `Hình vuông cạnh ${c} cm. Diện tích = ? (cm²)`,
+    visual: "", kind: "input", answer: c * c,
+    explain: `S = cạnh × cạnh = ${c} × ${c} = ${c * c} cm².` };
+};
+
+/* Ôn tập tổng hợp lớp 3 */
+GEN.l3on = () => {
+  const g = pick(["l3c1", "l3c2", "l3c3", "l3c4", "l3c5", "l3c6", "l3c7", "l3c8"]);
+  return GEN[g]();
+};
+
 /* Sinh đề: n câu, tránh trùng prompt */
 function makeQuiz(genKey, n = 10) {
   const qs = [];
@@ -745,7 +933,40 @@ const DATA = {
           baihoc: [] },
       ],
     },
-    { id: 3, ten: "Lớp 3", sub: "Sắp ra mắt cùng Cáo Lém", emoji: "🦊", nv: "cao", ready: false, chapters: [] },
+    { id: 3, ten: "Lớp 3", sub: "12 video · 9 chủ đề", emoji: "🦊", nv: "cao", ready: true,
+      chapters: [
+        { id: "l3c1", ten: "Bảng nhân 9", icon: "🙌", mau: "#f9844a", gen: "l3c1",
+          baihoc: [{ ten: "Tập 3.01 · Bảng nhân 9", ep: "e301" }] },
+        { id: "l3c2", ten: "Tìm thành phần phép tính", icon: "🎁", mau: "#9b5de5", gen: "l3c2",
+          baihoc: [{ ten: "Tập 3.02 · Tìm thành phần", ep: "e302" }] },
+        { id: "l3c3", ten: "Một phần mấy", icon: "🍰", mau: "#ffb703", gen: "l3c3",
+          baihoc: [{ ten: "Tập 3.03 · Một phần mấy", ep: "e303" }] },
+        { id: "l3c4", ten: "Trung điểm và hình tròn", icon: "⭕", mau: "#4d96ff", gen: "l3c4",
+          baihoc: [
+            { ten: "Tập 3.04 · Trung điểm", ep: "e304" },
+            { ten: "Tập 3.05 · Hình tròn", ep: "e305" },
+          ] },
+        { id: "l3c5", ten: "Góc vuông, góc không vuông", icon: "📐", mau: "#219ebc", gen: "l3c5",
+          baihoc: [{ ten: "Tập 3.06 · Góc vuông", ep: "e306" }] },
+        { id: "l3c6", ten: "Gấp, giảm số lần · Chia có dư", icon: "🥕", mau: "#06d6a0", gen: "l3c6",
+          baihoc: [
+            { ten: "Tập 3.07 · Gấp lên, giảm đi", ep: "e307" },
+            { ten: "Tập 3.08 · Phép chia có dư", ep: "e308" },
+          ] },
+        { id: "l3c7", ten: "Chu vi", icon: "🏡", mau: "#2d6a4f", gen: "l3c7",
+          baihoc: [
+            { ten: "Tập 3.09 · Chu vi hình chữ nhật", ep: "e309" },
+            { ten: "Tập 3.10 · Chu vi hình vuông", ep: "e310" },
+          ] },
+        { id: "l3c8", ten: "Diện tích", icon: "🧱", mau: "#e63946", gen: "l3c8",
+          baihoc: [
+            { ten: "Tập 3.11 · Diện tích của một hình", ep: "e311" },
+            { ten: "Tập 3.12 · Diện tích hình chữ nhật", ep: "e312" },
+          ] },
+        { id: "l3on", ten: "Ôn tập tổng hợp lớp 3", icon: "🌟", mau: "#8338ec", gen: "l3on",
+          baihoc: [] },
+      ],
+    },
     { id: 4, ten: "Lớp 4", sub: "Sắp ra mắt cùng Cún Bông", emoji: "🐶", nv: "cun", ready: false, chapters: [] },
     { id: 5, ten: "Lớp 5", sub: "Sắp ra mắt cùng Cú Thông Thái", emoji: "🦉", nv: "cu", ready: false, chapters: [] },
   ],
