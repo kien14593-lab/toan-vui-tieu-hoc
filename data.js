@@ -44,10 +44,23 @@ const TAP = {
   e310: { so: "3.10", ten: "Chu vi hình vuông", file: "tap-3-10.mp4", nv: "ong" },
   e311: { so: "3.11", ten: "Diện tích của một hình", file: "tap-3-11.mp4", nv: "cu" },
   e312: { so: "3.12", ten: "Diện tích hình chữ nhật", file: "tap-3-12.mp4", nv: "cu" },
+  e401: { so: "4.01", ten: "Hàng và lớp, số đến lớp triệu", file: "tap-4-01.mp4", nv: "cun" },
+  e402: { so: "4.02", ten: "Biểu thức chứa chữ", file: "tap-4-02.mp4", nv: "cun" },
+  e403: { so: "4.03", ten: "Góc nhọn, góc tù, góc bẹt", file: "tap-4-03.mp4", nv: "ong" },
+  e404: { so: "4.04", ten: "Giây, thế kỉ", file: "tap-4-04.mp4", nv: "meo" },
+  e405: { so: "4.05", ten: "Tính chất giao hoán, kết hợp", file: "tap-4-05.mp4", nv: "cun" },
+  e406: { so: "4.06", ten: "Tìm hai số biết tổng và hiệu", file: "tap-4-06.mp4", nv: "cao" },
+  e407: { so: "4.07", ten: "Hai đường thẳng vuông góc, song song", file: "tap-4-07.mp4", nv: "ong" },
+  e408: { so: "4.08", ten: "Hình bình hành, hình thoi", file: "tap-4-08.mp4", nv: "meo" },
+  e409: { so: "4.09", ten: "Khái niệm phân số", file: "tap-4-09.mp4", nv: "cun" },
+  e410: { so: "4.10", ten: "Phân số bằng nhau, rút gọn", file: "tap-4-10.mp4", nv: "tho" },
+  e411: { so: "4.11", ten: "Quy đồng, so sánh phân số", file: "tap-4-11.mp4", nv: "cu" },
+  e412: { so: "4.12", ten: "Cộng, trừ phân số", file: "tap-4-12.mp4", nv: "cun" },
 };
 const TAP_ORDER = ["e01","e02","e03","e04","e05","e06","e07","e08","e09","e10","e11","e12","e13","e14","e15","e16",
   "e201","e202","e203","e204","e205","e206","e207","e208","e209","e210","e211","e212",
-  "e301","e302","e303","e304","e305","e306","e307","e308","e309","e310","e311","e312"];
+  "e301","e302","e303","e304","e305","e306","e307","e308","e309","e310","e311","e312",
+  "e401","e402","e403","e404","e405","e406","e407","e408","e409","e410","e411","e412"];
 
 /* ===== Nhân vật (đúng tạo hình trong video Manim) ===== */
 const NV = {
@@ -834,6 +847,204 @@ GEN.l3on = () => {
   return GEN[g]();
 };
 
+/* ===== LỚP 4 ===== */
+/* L4-C1: Hàng và lớp, số đến lớp triệu */
+GEN.l4c1 = () => {
+  const kieu = pick(["chuso", "doc", "trieu"]);
+  if (kieu === "chuso") {
+    const n = ri(1, 99), giua = ri(0, 999), cuoi = ri(0, 999);
+    const so = n * 1000000 + giua * 1000 + cuoi;
+    const s = so.toLocaleString("vi-VN");
+    return { prompt: `Số ${s} có mấy chữ số?`, visual: "", kind: "input",
+      answer: String(so).length,
+      explain: `Đếm từng chữ số của ${s}: có ${String(so).length} chữ số.` };
+  }
+  if (kieu === "doc") {
+    const tr = ri(1, 900);
+    const so = tr * 1000000;
+    const { opts, idx } = numOptions(tr, 1, 999);
+    return { prompt: `Số ${so.toLocaleString("vi-VN")} đọc là "? triệu"`,
+      visual: `<div style="font-size:2rem">🔢</div>`,
+      kind: "choice", options: opts.map(o => `${o} triệu`), answer: idx,
+      explain: `Tách nhóm 3 chữ số: lớp triệu là ${tr}.` };
+  }
+  const a = ri(2, 9);
+  return { prompt: `${a} triệu = ? nghìn`, visual: "", kind: "input",
+    answer: a * 1000,
+    explain: `1 triệu = 1 000 nghìn nên ${a} triệu = ${a * 1000} nghìn.` };
+};
+
+/* L4-C2: Biểu thức chứa chữ */
+GEN.l4c2 = () => {
+  const chu = pick(["a", "b", "m", "n"]);
+  const kieu = pick(["cong", "tru", "nhan"]);
+  if (kieu === "cong") {
+    const v = ri(2, 30), c = ri(2, 20);
+    return { prompt: `Tính ${chu} + ${c} với ${chu} = ${v}`,
+      visual: `<div style="font-size:2rem">📦</div>`, kind: "input",
+      answer: v + c,
+      explain: `Thay ${chu} = ${v}: ${v} + ${c} = ${v + c}.` };
+  }
+  if (kieu === "tru") {
+    const v = ri(10, 50), c = ri(2, 9);
+    return { prompt: `Tính ${chu} − ${c} với ${chu} = ${v}`,
+      visual: "", kind: "input", answer: v - c,
+      explain: `Thay ${chu} = ${v}: ${v} − ${c} = ${v - c}.` };
+  }
+  const v = ri(2, 9), c = ri(2, 9);
+  return { prompt: `Tính ${chu} × ${c} với ${chu} = ${v}`,
+    visual: "", kind: "input", answer: v * c,
+    explain: `Thay ${chu} = ${v}: ${v} × ${c} = ${v * c}.` };
+};
+
+/* L4-C3: Góc nhọn, góc tù, góc bẹt */
+GEN.l4c3 = () => {
+  const kieu = pick(["nhon", "tu", "bet", "so"]);
+  const options = ["Góc nhọn", "Góc vuông", "Góc tù", "Góc bẹt"];
+  if (kieu === "nhon")
+    return { prompt: "Góc BÉ hơn góc vuông gọi là góc gì?",
+      visual: `<div style="font-size:2.4rem">📐</div>`, kind: "choice",
+      options, answer: 0, explain: "Góc nhọn bé hơn góc vuông." };
+  if (kieu === "tu")
+    return { prompt: "Góc LỚN hơn góc vuông (chưa thẳng hàng) là góc gì?",
+      visual: "", kind: "choice", options, answer: 2,
+      explain: "Góc tù lớn hơn góc vuông nhưng bé hơn góc bẹt." };
+  if (kieu === "bet")
+    return { prompt: "Hai cạnh thẳng hàng tạo thành góc gì?",
+      visual: "", kind: "choice", options, answer: 3,
+      explain: "Góc bẹt có hai cạnh thẳng hàng, bằng 2 góc vuông." };
+  return { prompt: "Góc bẹt bằng mấy góc vuông?", visual: "",
+    kind: "input", answer: 2, explain: "Góc bẹt = 2 góc vuông." };
+};
+
+/* L4-C4: Giây, thế kỉ */
+GEN.l4c4 = () => {
+  const kieu = pick(["phut", "theki", "nam"]);
+  if (kieu === "phut") {
+    const p = ri(2, 5);
+    return { prompt: `${p} phút = ? giây`,
+      visual: `<div style="font-size:2.2rem">⏱️</div>`, kind: "input",
+      answer: p * 60,
+      explain: `1 phút = 60 giây nên ${p} phút = ${p * 60} giây.` };
+  }
+  if (kieu === "theki") {
+    const t = ri(2, 5);
+    return { prompt: `${t} thế kỉ = ? năm`, visual: "", kind: "input",
+      answer: t * 100,
+      explain: `1 thế kỉ = 100 năm nên ${t} thế kỉ = ${t * 100} năm.` };
+  }
+  const nam = pick([1985, 2005, 2024, 1890, 2010, 1975]);
+  const tk = Math.floor((nam - 1) / 100) + 1;
+  const { opts, idx } = numOptions(tk, 15, 22);
+  return { prompt: `Năm ${nam} thuộc thế kỉ thứ mấy?`,
+    visual: "", kind: "choice", options: opts.map(String), answer: idx,
+    explain: `Năm ${nam} thuộc thế kỉ ${tk}.` };
+};
+
+/* L4-C5: Giao hoán, kết hợp */
+GEN.l4c5 = () => {
+  const kieu = pick(["ghep", "doicho"]);
+  if (kieu === "ghep") {
+    const a = ri(2, 8), b = 10 - a, c = ri(3, 9);
+    return { prompt: `Tính nhanh: ${a} + ${c} + ${b} = ?`,
+      visual: `<div style="font-size:2rem">⚡</div>`, kind: "input",
+      answer: 10 + c,
+      explain: `Ghép ${a} + ${b} = 10, thêm ${c} → ${10 + c}.` };
+  }
+  const a = ri(10, 60), b = ri(10, 60);
+  return { prompt: `${a} + ${b} = ${b} + ? (giao hoán)`,
+    visual: "", kind: "input", answer: a,
+    explain: `Đổi chỗ các số hạng, tổng không đổi: ${a} + ${b} = ${b} + ${a}.` };
+};
+
+/* L4-C6: Tổng và hiệu */
+GEN.l4c6 = () => {
+  const be = ri(3, 20), hieu = ri(2, 8) * 2;
+  const lon = be + hieu, tong = be + lon;
+  const hoi = pick(["be", "lon"]);
+  if (hoi === "be")
+    return { prompt: `Hai số có tổng ${tong}, hiệu ${hieu}. Số BÉ = ?`,
+      visual: `<div style="font-size:2rem">⚖️</div>`, kind: "input",
+      answer: be,
+      explain: `Số bé = (tổng − hiệu) : 2 = (${tong} − ${hieu}) : 2 = ${be}.` };
+  return { prompt: `Hai số có tổng ${tong}, hiệu ${hieu}. Số LỚN = ?`,
+    visual: "", kind: "input", answer: lon,
+    explain: `Số lớn = (tổng + hiệu) : 2 = (${tong} + ${hieu}) : 2 = ${lon}.` };
+};
+
+/* L4-C7: Vuông góc, song song, bình hành, thoi */
+GEN.l4c7 = () => {
+  const kieu = pick(["ray", "vuong", "bh", "thoi"]);
+  if (kieu === "ray")
+    return { prompt: "Hai đường thẳng song song có gặp nhau không?",
+      visual: `<div style="font-size:2.2rem">🛤️</div>`, kind: "choice",
+      options: ["Không bao giờ", "Có, ở rất xa", "Gặp 1 lần", "Gặp 2 lần"],
+      answer: 0, explain: "Song song thì không bao giờ cắt nhau." };
+  if (kieu === "vuong")
+    return { prompt: "Hai đường thẳng cắt nhau tạo thành góc vuông gọi là gì?",
+      visual: "", kind: "choice",
+      options: ["Vuông góc", "Song song", "Trùng nhau", "Chéo nhau"],
+      answer: 0, explain: "Cắt nhau tạo góc vuông → vuông góc." };
+  if (kieu === "bh")
+    return { prompt: "Hình chữ nhật 'xô nghiêng' thành hình gì?",
+      visual: `<div style="font-size:2.2rem">🔷</div>`, kind: "choice",
+      options: ["Hình bình hành", "Hình thoi", "Hình tròn", "Hình tam giác"],
+      answer: 0, explain: "Chữ nhật xô nghiêng → bình hành." };
+  return { prompt: "Hình thoi có mấy cạnh bằng nhau?", visual: "",
+    kind: "input", answer: 4, explain: "Hình thoi có 4 cạnh bằng nhau." };
+};
+
+/* L4-C8: Phân số */
+GEN.l4c8 = () => {
+  const kieu = pick(["kn", "rutgon", "sosanh", "cong", "tru"]);
+  const lam = (dung, sai, prompt, visual, explain) => {
+    const uniq = [...new Set(sai)].filter(s => s !== dung).slice(0, 3);
+    const options = shuffle([dung, ...uniq]);
+    return { prompt, visual, kind: "choice", options,
+      answer: options.indexOf(dung), explain };
+  };
+  if (kieu === "kn") {
+    const m = pick([4, 6, 8]), t = ri(1, m - 1);
+    return lam(`${t}/${m}`, [`${m}/${t}`, `${t}/${m + 1}`, `${m}/${m}`],
+      `Bánh cắt ${m} phần bằng nhau, lấy ${t} phần. Phân số?`,
+      `<div style="font-size:2.2rem">🍕</div>`,
+      `Chia ${m} lấy ${t} → ${t}/${m}.`);
+  }
+  if (kieu === "rutgon") {
+    const [t, m] = pick([[1, 2], [1, 3], [2, 3], [1, 4], [3, 4], [2, 5], [3, 5], [1, 6], [5, 6]]);
+    const k = ri(2, 4);
+    return lam(`${t}/${m}`, [`${t}/${m + 1}`, `${t + 1}/${m}`, `${m}/${t}`],
+      `Rút gọn: ${t * k}/${m * k} = ?`, "",
+      `Chia cả tử và mẫu cho ${k}: ${t * k}/${m * k} = ${t}/${m}.`);
+  }
+  if (kieu === "sosanh") {
+    const m = ri(5, 12), a = ri(1, m - 2), b = ri(a + 1, m - 1);
+    return { prompt: `Phân số nào LỚN hơn?`, visual: "",
+      kind: "choice",
+      options: [`${a}/${m}`, `${b}/${m}`],
+      answer: 1,
+      explain: `Cùng mẫu ${m}: tử ${b} > ${a} nên ${b}/${m} lớn hơn.` };
+  }
+  if (kieu === "cong") {
+    const m = ri(5, 12), a = ri(1, 4), b = ri(1, m - a - 1);
+    return lam(`${a + b}/${m}`,
+      [`${a + b}/${m * 2}`, `${a * b}/${m}`, `${a + b + 1}/${m}`],
+      `${a}/${m} + ${b}/${m} = ?`, "",
+      `Cùng mẫu: cộng tử, giữ mẫu → ${a + b}/${m}.`);
+  }
+  const m = ri(5, 12), b2 = ri(1, 5), a2 = ri(b2 + 1, m - 1);
+  return lam(`${a2 - b2}/${m}`,
+    [`${a2 - b2}/${m - 1}`, `${a2 + b2}/${m}`, `${a2}/${b2}`],
+    `${a2}/${m} − ${b2}/${m} = ?`, "",
+    `Cùng mẫu: trừ tử, giữ mẫu → ${a2 - b2}/${m}.`);
+};
+
+/* Ôn tập tổng hợp lớp 4 */
+GEN.l4on = () => {
+  const g = pick(["l4c1", "l4c2", "l4c3", "l4c4", "l4c5", "l4c6", "l4c7", "l4c8"]);
+  return GEN[g]();
+};
+
 /* Sinh đề: n câu, tránh trùng prompt */
 function makeQuiz(genKey, n = 10) {
   const qs = [];
@@ -967,7 +1178,36 @@ const DATA = {
           baihoc: [] },
       ],
     },
-    { id: 4, ten: "Lớp 4", sub: "Sắp ra mắt cùng Cún Bông", emoji: "🐶", nv: "cun", ready: false, chapters: [] },
+    { id: 4, ten: "Lớp 4", sub: "12 video · 9 chủ đề", emoji: "🐶", nv: "cun", ready: true,
+      chapters: [
+        { id: "l4c1", ten: "Số đến lớp triệu", icon: "🔢", mau: "#f9844a", gen: "l4c1",
+          baihoc: [{ ten: "Tập 4.01 · Hàng và lớp", ep: "e401" }] },
+        { id: "l4c2", ten: "Biểu thức chứa chữ", icon: "📦", mau: "#9b5de5", gen: "l4c2",
+          baihoc: [{ ten: "Tập 4.02 · Biểu thức chứa chữ", ep: "e402" }] },
+        { id: "l4c3", ten: "Góc nhọn, góc tù, góc bẹt", icon: "📐", mau: "#219ebc", gen: "l4c3",
+          baihoc: [{ ten: "Tập 4.03 · Góc nhọn, tù, bẹt", ep: "e403" }] },
+        { id: "l4c4", ten: "Giây, thế kỉ", icon: "⏱️", mau: "#ffb703", gen: "l4c4",
+          baihoc: [{ ten: "Tập 4.04 · Giây, thế kỉ", ep: "e404" }] },
+        { id: "l4c5", ten: "Giao hoán, kết hợp", icon: "⚡", mau: "#06d6a0", gen: "l4c5",
+          baihoc: [{ ten: "Tập 4.05 · Tính chất phép cộng", ep: "e405" }] },
+        { id: "l4c6", ten: "Tổng và hiệu", icon: "⚖️", mau: "#4d96ff", gen: "l4c6",
+          baihoc: [{ ten: "Tập 4.06 · Tìm hai số", ep: "e406" }] },
+        { id: "l4c7", ten: "Song song, bình hành, thoi", icon: "🔷", mau: "#2d6a4f", gen: "l4c7",
+          baihoc: [
+            { ten: "Tập 4.07 · Vuông góc, song song", ep: "e407" },
+            { ten: "Tập 4.08 · Bình hành, thoi", ep: "e408" },
+          ] },
+        { id: "l4c8", ten: "Phân số", icon: "🍕", mau: "#e63946", gen: "l4c8",
+          baihoc: [
+            { ten: "Tập 4.09 · Khái niệm phân số", ep: "e409" },
+            { ten: "Tập 4.10 · Phân số bằng nhau", ep: "e410" },
+            { ten: "Tập 4.11 · Quy đồng, so sánh", ep: "e411" },
+            { ten: "Tập 4.12 · Cộng, trừ phân số", ep: "e412" },
+          ] },
+        { id: "l4on", ten: "Ôn tập tổng hợp lớp 4", icon: "🌟", mau: "#8338ec", gen: "l4on",
+          baihoc: [] },
+      ],
+    },
     { id: 5, ten: "Lớp 5", sub: "Sắp ra mắt cùng Cú Thông Thái", emoji: "🦉", nv: "cu", ready: false, chapters: [] },
   ],
 };
