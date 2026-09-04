@@ -56,11 +56,24 @@ const TAP = {
   e410: { so: "4.10", ten: "Phân số bằng nhau, rút gọn", file: "tap-4-10.mp4", nv: "tho" },
   e411: { so: "4.11", ten: "Quy đồng, so sánh phân số", file: "tap-4-11.mp4", nv: "cu" },
   e412: { so: "4.12", ten: "Cộng, trừ phân số", file: "tap-4-12.mp4", nv: "cun" },
+  e501: { so: "5.01", ten: "Khái niệm số thập phân", file: "tap-5-01.mp4", nv: "cu" },
+  e502: { so: "5.02", ten: "So sánh số thập phân", file: "tap-5-02.mp4", nv: "cu" },
+  e503: { so: "5.03", ten: "Nhân, chia số thập phân với 10, 100, 1000", file: "tap-5-03.mp4", nv: "cao" },
+  e504: { so: "5.04", ten: "Tỉ số phần trăm", file: "tap-5-04.mp4", nv: "cu" },
+  e505: { so: "5.05", ten: "Tìm giá trị phần trăm của một số", file: "tap-5-05.mp4", nv: "cao" },
+  e506: { so: "5.06", ten: "Diện tích hình tam giác", file: "tap-5-06.mp4", nv: "meo" },
+  e507: { so: "5.07", ten: "Diện tích hình thang", file: "tap-5-07.mp4", nv: "meo" },
+  e508: { so: "5.08", ten: "Chu vi hình tròn", file: "tap-5-08.mp4", nv: "ong" },
+  e509: { so: "5.09", ten: "Diện tích hình tròn", file: "tap-5-09.mp4", nv: "ong" },
+  e510: { so: "5.10", ten: "Thể tích của một hình", file: "tap-5-10.mp4", nv: "cu" },
+  e511: { so: "5.11", ten: "Thể tích hình hộp chữ nhật", file: "tap-5-11.mp4", nv: "cu" },
+  e512: { so: "5.12", ten: "Vận tốc, quãng đường, thời gian", file: "tap-5-12.mp4", nv: "cu" },
 };
 const TAP_ORDER = ["e01","e02","e03","e04","e05","e06","e07","e08","e09","e10","e11","e12","e13","e14","e15","e16",
   "e201","e202","e203","e204","e205","e206","e207","e208","e209","e210","e211","e212",
   "e301","e302","e303","e304","e305","e306","e307","e308","e309","e310","e311","e312",
-  "e401","e402","e403","e404","e405","e406","e407","e408","e409","e410","e411","e412"];
+  "e401","e402","e403","e404","e405","e406","e407","e408","e409","e410","e411","e412",
+  "e501","e502","e503","e504","e505","e506","e507","e508","e509","e510","e511","e512"];
 
 /* ===== Nhân vật (đúng tạo hình trong video Manim) ===== */
 const NV = {
@@ -1045,6 +1058,188 @@ GEN.l4on = () => {
   return GEN[g]();
 };
 
+/* ===== LỚP 5 ===== */
+/* Số thập phân: khái niệm + so sánh */
+GEN.l5c1 = () => {
+  const kieu = pick(["kn", "doc", "ss"]);
+  const lam = (dung, sai, prompt, visual, explain) => {
+    const uniq = [...new Set(sai)].filter(s => s !== dung).slice(0, 3);
+    const options = shuffle([dung, ...uniq]);
+    return { prompt, visual, kind: "choice", options,
+      answer: options.indexOf(dung), explain };
+  };
+  if (kieu === "kn") {
+    const t = ri(1, 9);
+    return lam(`0,${t}`, [`${t},0`, `0,0${t}`, `${t}`],
+      `${t}/10 viết thành số thập phân là?`,
+      `<div style="font-size:2.2rem">📏</div>`,
+      `${t}/10 = 0,${t} (không phẩy ${t}).`);
+  }
+  if (kieu === "doc") {
+    const n = ri(1, 9), t = ri(1, 9);
+    return lam(`${n},${t}`, [`${t},${n}`, `${n}${t}`, `0,${n}${t}`],
+      `"${["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"][n]} phẩy ${["không","một","hai","ba","bốn","năm","sáu","bảy","tám","chín"][t]}" viết là?`, "",
+      `Phần nguyên ${n}, phần thập phân ${t} → ${n},${t}.`);
+  }
+  const a = ri(2, 9), b = ri(1, a - 1);
+  const s1 = `0,${a}`, s2 = `0,${b}${ri(0, 9)}`;
+  return { prompt: `Số nào LỚN hơn?`, visual: "",
+    kind: "choice", options: [s1, s2], answer: 0,
+    explain: `So hàng phần mười: ${a} > ${b} nên ${s1} lớn hơn.` };
+};
+
+/* Nhân, chia số thập phân với 10, 100, 1000 */
+GEN.l5c2 = () => {
+  const v = ri(11, 99);
+  const nguyen = Math.floor(v / 10), le = v % 10;
+  const goc = `${nguyen},${le}`;
+  const kieu = pick(["n10", "n100", "c10", "c100"]);
+  const lam = (dung, sai, prompt, explain) => {
+    const uniq = [...new Set(sai)].filter(s => s !== dung).slice(0, 3);
+    const options = shuffle([dung, ...uniq]);
+    return { prompt, visual: `<div style="font-size:2.2rem">💫</div>`,
+      kind: "choice", options, answer: options.indexOf(dung), explain };
+  };
+  if (kieu === "n10")
+    return lam(`${v}`, [`${v}0`, `0,${nguyen}${le}`, goc],
+      `${goc} × 10 = ?`, `Phẩy nhảy phải 1 bước: ${goc} × 10 = ${v}.`);
+  if (kieu === "n100")
+    return lam(`${v}0`, [`${v}`, `${v}00`, `0,0${nguyen}${le}`],
+      `${goc} × 100 = ?`, `Phẩy nhảy phải 2 bước: ${goc} × 100 = ${v}0.`);
+  if (kieu === "c10")
+    return lam(`0,${nguyen}${le}`, [`${v}`, `0,0${nguyen}${le}`, goc],
+      `${goc} : 10 = ?`, `Phẩy nhảy trái 1 bước: ${goc} : 10 = 0,${nguyen}${le}.`);
+  return lam(`0,0${nguyen}${le}`, [`0,${nguyen}${le}`, `${v}`, goc],
+    `${goc} : 100 = ?`, `Phẩy nhảy trái 2 bước: ${goc} : 100 = 0,0${nguyen}${le}.`);
+};
+
+/* Tỉ số phần trăm */
+GEN.l5c3 = () => {
+  const kieu = pick(["o", "nua", "gia"]);
+  if (kieu === "o") {
+    const n = pick([10, 20, 25, 30, 40, 50, 60, 75, 80]);
+    return { prompt: `Tô ${n} ô trong lưới 100 ô. Được bao nhiêu phần trăm?`,
+      visual: `<div style="font-size:2.2rem">🟧</div>`,
+      kind: "input", answer: n,
+      explain: `${n} trong 100 ô = ${n}%.` };
+  }
+  if (kieu === "nua") {
+    const { opts, idx } = numOptions(50, 10, 100);
+    return { prompt: `Một nửa tấm bánh là bao nhiêu phần trăm?`,
+      visual: `<div style="font-size:2.2rem">🍰</div>`,
+      kind: "choice", options: opts.map(o => `${o}%`), answer: idx,
+      explain: `Một nửa = 50/100 = 50%.` };
+  }
+  const x = pick([10, 20, 25, 50]), N = pick([40, 60, 80, 100, 200]);
+  const kq = N * x / 100;
+  return { prompt: `Tìm ${x}% của ${N}.`, visual: "",
+    kind: "input", answer: kq,
+    explain: `${N} × ${x} : 100 = ${kq}.` };
+};
+
+/* Diện tích tam giác + hình thang */
+GEN.l5c4 = () => {
+  const kieu = pick(["tg", "thang"]);
+  if (kieu === "tg") {
+    const a = pick([4, 6, 8, 10]), h = ri(3, 9);
+    return { prompt: `Tam giác có đáy ${a} cm, chiều cao ${h} cm. Diện tích = ? (cm²)`,
+      visual: `<div style="font-size:2.2rem">📐</div>`,
+      kind: "input", answer: a * h / 2,
+      explain: `S = đáy × cao : 2 = ${a} × ${h} : 2 = ${a * h / 2} cm².` };
+  }
+  const b = ri(2, 5), a = b + pick([2, 4]), h = ri(2, 6);
+  return { prompt: `Hình thang: đáy lớn ${a} cm, đáy bé ${b} cm, cao ${h} cm. Diện tích = ? (cm²)`,
+    visual: `<div style="font-size:2.2rem">🪁</div>`,
+    kind: "input", answer: (a + b) * h / 2,
+    explain: `S = (${a} + ${b}) × ${h} : 2 = ${(a + b) * h / 2} cm².` };
+};
+
+/* Chu vi + diện tích hình tròn */
+GEN.l5c5 = () => {
+  const kieu = pick(["pi", "cv", "dt"]);
+  const lam = (dung, sai, prompt, visual, explain) => {
+    const uniq = [...new Set(sai)].filter(s => s !== dung).slice(0, 3);
+    const options = shuffle([dung, ...uniq]);
+    return { prompt, visual, kind: "choice", options,
+      answer: options.indexOf(dung), explain };
+  };
+  if (kieu === "pi")
+    return lam("3,14", ["2,14", "3,41", "4,13"],
+      `Chu vi hình tròn gấp khoảng mấy lần đường kính?`,
+      `<div style="font-size:2.2rem">⭕</div>`,
+      `Số pi ≈ 3,14: chu vi ≈ 3,14 lần đường kính.`);
+  if (kieu === "cv") {
+    const d = pick([1, 2, 3, 10]);
+    const kq = { 1: "3,14", 2: "6,28", 3: "9,42", 10: "31,4" }[d];
+    return lam(kq, ["3,14", "6,28", "9,42", "31,4"].filter(x => x !== kq),
+      `Hình tròn có đường kính ${d} cm. Chu vi ≈ ? (cm)`,
+      `<div style="font-size:2.2rem">🛞</div>`,
+      `C = d × 3,14 = ${d} × 3,14 = ${kq} cm.`);
+  }
+  const r = pick([1, 2, 3, 10]);
+  const kq = { 1: "3,14", 2: "12,56", 3: "28,26", 10: "314" }[r];
+  return lam(kq, ["3,14", "12,56", "28,26", "314"].filter(x => x !== kq),
+    `Hình tròn có bán kính ${r} cm. Diện tích ≈ ? (cm²)`,
+    `<div style="font-size:2.2rem">🍊</div>`,
+    `S = r × r × 3,14 = ${r} × ${r} × 3,14 = ${kq} cm².`);
+};
+
+/* Thể tích */
+GEN.l5c6 = () => {
+  const kieu = pick(["dem", "hhcn", "lap"]);
+  if (kieu === "dem") {
+    const n = ri(6, 30);
+    return { prompt: `Chiếc hộp xếp vừa đúng ${n} khối 1 cm³. Thể tích hộp = ? (cm³)`,
+      visual: `<div style="font-size:2.2rem">🧊</div>`,
+      kind: "input", answer: n,
+      explain: `Đếm khối: ${n} khối = ${n} cm³.` };
+  }
+  if (kieu === "hhcn") {
+    const d = ri(2, 6), r = ri(2, 5), c = ri(2, 4);
+    return { prompt: `Hình hộp chữ nhật: dài ${d} cm, rộng ${r} cm, cao ${c} cm. V = ? (cm³)`,
+      visual: `<div style="font-size:2.2rem">📦</div>`,
+      kind: "input", answer: d * r * c,
+      explain: `V = ${d} × ${r} × ${c} = ${d * r * c} cm³.` };
+  }
+  const a = ri(2, 5);
+  return { prompt: `Hình lập phương cạnh ${a} cm. V = ? (cm³)`,
+    visual: `<div style="font-size:2.2rem">🎲</div>`,
+    kind: "input", answer: a * a * a,
+    explain: `V = ${a} × ${a} × ${a} = ${a * a * a} cm³.` };
+};
+
+/* Vận tốc, quãng đường, thời gian */
+GEN.l5c7 = () => {
+  const kieu = pick(["s", "v", "gap"]);
+  if (kieu === "s") {
+    const v = pick([10, 15, 20, 30, 40, 50, 60]), t = ri(2, 4);
+    return { prompt: `Xe đi với vận tốc ${v} km/giờ trong ${t} giờ. Quãng đường = ? (km)`,
+      visual: `<div style="font-size:2.2rem">🚗</div>`,
+      kind: "input", answer: v * t,
+      explain: `s = v × t = ${v} × ${t} = ${v * t} km.` };
+  }
+  if (kieu === "v") {
+    const v = pick([10, 15, 20, 30, 40, 50]), t = ri(2, 4);
+    return { prompt: `Xe đi ${v * t} km hết ${t} giờ. Vận tốc = ? (km/giờ)`,
+      visual: `<div style="font-size:2.2rem">🏍️</div>`,
+      kind: "input", answer: v,
+      explain: `v = s : t = ${v * t} : ${t} = ${v} km/giờ.` };
+  }
+  const v1 = pick([30, 40, 50, 60]), v2 = pick([20, 30, 40]);
+  const t = ri(1, 3), kc = (v1 + v2) * t;
+  return { prompt: `Hai xe ngược chiều cách nhau ${kc} km, vận tốc ${v1} và ${v2} km/giờ. Mấy giờ thì gặp nhau?`,
+    visual: `<div style="font-size:2.2rem">🚙</div>`,
+    kind: "input", answer: t,
+    explain: `Mỗi giờ gần thêm ${v1} + ${v2} = ${v1 + v2} km. ${kc} : ${v1 + v2} = ${t} giờ.` };
+};
+
+/* Ôn tập tổng hợp lớp 5 */
+GEN.l5on = () => {
+  const g = pick(["l5c1", "l5c2", "l5c3", "l5c4", "l5c5", "l5c6", "l5c7"]);
+  return GEN[g]();
+};
+
+
 /* Sinh đề: n câu, tránh trùng prompt */
 function makeQuiz(genKey, n = 10) {
   const qs = [];
@@ -1208,6 +1403,40 @@ const DATA = {
           baihoc: [] },
       ],
     },
-    { id: 5, ten: "Lớp 5", sub: "Sắp ra mắt cùng Cú Thông Thái", emoji: "🦉", nv: "cu", ready: false, chapters: [] },
+    { id: 5, ten: "Lớp 5", sub: "12 video · 8 chủ đề", emoji: "🦉", nv: "cu", ready: true,
+      chapters: [
+        { id: "l5c1", ten: "Số thập phân", icon: "🔢", mau: "#4d96ff", gen: "l5c1",
+          baihoc: [
+            { ten: "Tập 5.01 · Khái niệm số thập phân", ep: "e501" },
+            { ten: "Tập 5.02 · So sánh số thập phân", ep: "e502" },
+          ] },
+        { id: "l5c2", ten: "Nhân, chia với 10, 100", icon: "💫", mau: "#9b5de5", gen: "l5c2",
+          baihoc: [{ ten: "Tập 5.03 · Dấu phẩy nhảy múa", ep: "e503" }] },
+        { id: "l5c3", ten: "Tỉ số phần trăm", icon: "💯", mau: "#f9844a", gen: "l5c3",
+          baihoc: [
+            { ten: "Tập 5.04 · Tỉ số phần trăm", ep: "e504" },
+            { ten: "Tập 5.05 · Giá trị phần trăm", ep: "e505" },
+          ] },
+        { id: "l5c4", ten: "Tam giác, hình thang", icon: "📐", mau: "#06d6a0", gen: "l5c4",
+          baihoc: [
+            { ten: "Tập 5.06 · Diện tích tam giác", ep: "e506" },
+            { ten: "Tập 5.07 · Diện tích hình thang", ep: "e507" },
+          ] },
+        { id: "l5c5", ten: "Hình tròn", icon: "⭕", mau: "#e63946", gen: "l5c5",
+          baihoc: [
+            { ten: "Tập 5.08 · Chu vi hình tròn", ep: "e508" },
+            { ten: "Tập 5.09 · Diện tích hình tròn", ep: "e509" },
+          ] },
+        { id: "l5c6", ten: "Thể tích", icon: "🧊", mau: "#219ebc", gen: "l5c6",
+          baihoc: [
+            { ten: "Tập 5.10 · Thể tích của một hình", ep: "e510" },
+            { ten: "Tập 5.11 · Thể tích hình hộp", ep: "e511" },
+          ] },
+        { id: "l5c7", ten: "Vận tốc, quãng đường", icon: "🚗", mau: "#ffb703", gen: "l5c7",
+          baihoc: [{ ten: "Tập 5.12 · Vận tốc", ep: "e512" }] },
+        { id: "l5on", ten: "Ôn tập tổng hợp lớp 5", icon: "🌟", mau: "#8338ec", gen: "l5on",
+          baihoc: [] },
+      ],
+    },
   ],
 };
